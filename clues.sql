@@ -39,23 +39,58 @@ AND isofficial = TRUE;
 -- Answer: Country codes:  CHE, ITA, SMR, VAT
 
 -- NEW QUERY:
-SELECT name 
+-- updated to include code for next clue
+SELECT name, code 
 FROM countries 
+-- filters the countries
+-- only returns those whose code is in the below list
 WHERE code IN (
+    -- inner query (subquery)
+    -- retrieves countrycode from countrylanguages table
     SELECT countrycode 
     FROM countrylanguages 
     WHERE language = 'Italian' 
     AND isofficial = TRUE
+    -- groups the data by countrycode
     GROUP BY countrycode 
+    -- only return countries with exactly 1 language
     HAVING COUNT(*) = 1
 );
 
--- Answer: Switzerland, Italy, San Marino, Holy See
+-- Answer: Switzerland CHE, Italy ITA, San Marino SMR, Holy See VAT
 
 ------------------------------------------------------------------------------
 
 -- Clue #4: We're booking the first flight out – maybe we've actually got a chance to catch her this time. There are only two cities she could be flying to in the country. One is named the same as the country – that would be too obvious. We're following our gut on this one; find out what other city in that country she might be flying to.
 -- Write SQL query here
+
+-- so... find a city in a country where italian is the only official language
+-- exclude city with the same name as the country...
+
+-- dot notation specifies which table the column belongs to 
+-- (good for when multiple tables are involved in a query)
+-- find city name
+SELECT cities.name
+-- join these two tables bc their data is related
+-- still need to specify how they're connected
+FROM cities, countries
+-- shows relationship
+-- combine rows from both tables where the countrycode (cities table) matches the code (countries table)
+WHERE cities.countrycode = countries.code
+-- filters for where italian is the only official language
+AND countries.code IN (
+    SELECT countrycode
+    FROM countrylanguages
+    WHERE language = 'Italian'
+    AND isofficial = TRUE
+    GROUP BY countrycode
+    HAVING COUNT(*) = 1
+)
+-- excludes the city that matches country name
+AND cities.name <> countries.name
+LIMIT 1;
+
+-- Answer: Zurich!
 
 ------------------------------------------------------------------------------
 
