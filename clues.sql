@@ -73,29 +73,40 @@ WHERE code IN (
 SELECT cities.name
 -- join these two tables bc their data is related
 -- still need to specify how they're connected
-FROM cities, countries
+FROM cities
 -- shows relationship
 -- combine rows from both tables where the countrycode (cities table) matches the code (countries table)
-WHERE cities.countrycode = countries.code
+JOIN countries ON cities.countrycode = countries.code
 -- filters for where italian is the only official language
-AND countries.code IN (
-    SELECT countrycode
-    FROM countrylanguages
-    WHERE language = 'Italian'
-    AND isofficial = TRUE
-    GROUP BY countrycode
-    HAVING COUNT(*) = 1
-)
--- excludes the city that matches country name
-AND cities.name <> countries.name
-LIMIT 1;
+WHERE countries.code = 'SMR'
+AND cities.name <> countries.name;
 
--- Answer: Zurich!
+-- Answer: Serravalle
 
 ------------------------------------------------------------------------------
 
 -- Clue #5: Oh no, she pulled a switch – there are two cities with very similar names, but in totally different parts of the globe! She's headed to South America as we speak; go find a city whose name is like the one we were headed to, but doesn't end the same. Find out the city, and do another search for what country it's in. Hurry!
 -- Write SQL query here
+
+-- show both city and country
+SELECT cities.name
+-- look for a city...
+FROM cities
+-- join the two tables where they're related
+JOIN countries ON cities.countrycode = countries.code
+-- look for cities that start with Serra, plus the wildcard
+WHERE countries.continent = 'South America'
+AND cities.name LIKE 'Serra%'
+AND cities.name <> 'Serravalle';
+
+-- Answer: Serra
+
+SELECT countries.name
+FROM countries
+JOIN cities ON cities.countrycode = countries.code
+WHERE cities.name = 'Serra';
+
+-- Brazil!
 
 ------------------------------------------------------------------------------
 
