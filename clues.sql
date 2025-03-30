@@ -106,7 +106,7 @@ FROM countries
 JOIN cities ON cities.countrycode = countries.code
 WHERE cities.name = 'Serra';
 
--- Brazil!
+-- Answer: Brazil!
 
 ------------------------------------------------------------------------------
 
@@ -114,6 +114,18 @@ WHERE cities.name = 'Serra';
 -- the capital! Look up the country's capital, and get there pronto! Send us the name of where you're headed and we'll
 -- follow right behind you!
 -- Write SQL query here
+
+SELECT cities.name
+FROM cities
+WHERE cities.id = (
+    SELECT countries.capital
+    FROM countries
+    WHERE countries.name = 'Brazil'
+);
+
+-- Answer: Brasilia
+
+
 
 ------------------------------------------------------------------------------
 
